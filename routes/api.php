@@ -11,7 +11,22 @@ Route::controller(\App\Http\Controllers\Auth\AuthController::class)->group(funct
 });
 
 // Get User Data
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::group([
+    'middleware' => ['auth:sanctum']
+], function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+});
+
+Route::group([
+    'prefix' => 'contact'
+], function () {
+    Route::post('/' , [\App\Http\Controllers\Contact\MessageController::class, 'messages']);
+    Route::post('/store' , [\App\Http\Controllers\Contact\MessageController::class, 'storeMessage']);
 });
 
