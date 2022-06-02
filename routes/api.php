@@ -21,7 +21,26 @@ Route::group([
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+    Route::group([
+        'prefix' => 'dashboard'
+    ], function () {
+        Route::group([
+            'prefix' => 'blog'
+        ], function () {
+            Route::post('/articles', [\App\Http\Controllers\Blog\ArticleController::class, 'articles'])->name('dash-articles');
+            Route::post('/create-article', [\App\Http\Controllers\Blog\ArticleController::class, 'createArticle'])->name('dash-articles-create');
+        });
+    });
 });
+
+// Public Face
+Route::group([
+    'prefix' => 'blog'
+], function () {
+    Route::post('/articles', [\App\Http\Controllers\Blog\ArticleController::class, 'index'])->name('articles');
+});
+
+
 
 Route::group([
     'prefix' => 'contact'

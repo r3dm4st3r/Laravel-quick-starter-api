@@ -21,7 +21,11 @@ class AuthController extends Controller
     {
         $credential = $request->only('email', 'password');
         if (Auth::attempt($credential)) {
-            return response()->json(Auth::user(), 200);
+            $user = Auth::user();
+            return response()->json([
+                'user' => $user,
+                'token' => $user->createToken('login')->plainTextToken
+            ], 200);
         }
         throw new AuthenticationException();
     }
