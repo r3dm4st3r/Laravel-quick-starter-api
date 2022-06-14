@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('info');
             $table->longText('content');
+            $table->integer('views')->nullable()->default(0);
+            $table->integer('likes')->nullable()->default(0);
+            $table->integer('comments')->nullable()->default(0);
             $table->timestamps();
         });
     }

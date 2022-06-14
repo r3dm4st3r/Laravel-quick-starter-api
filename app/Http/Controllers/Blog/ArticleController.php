@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateOrUpdateArticleRequest;
 use App\Models\Article;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
@@ -28,6 +29,19 @@ class ArticleController extends Controller
         }
     }
 
+    // Increase count
+    protected function viewIncrease(Article $article) {
+        $article->increment('views', 1);
+        $article->update();
+    }
+    // Increase like
+
+    protected function likeIncrease(Article $article) {
+        $article->increment('likes', 1);
+    }
+
+
+
 // For front end
     public function index(): JsonResponse
     {
@@ -36,7 +50,8 @@ class ArticleController extends Controller
 
     public function viewArticle(Article $article, $slug): JsonResponse
     {
-        $article = $article->where('slug', $slug)->get()->first();
+        $article = $article->where('slug', $slug)->first();
+        $this->viewIncrease($article);
         if ($article) {
             return response()->json([
                 'article' => $article
@@ -46,6 +61,28 @@ class ArticleController extends Controller
             'message' => 'No articles found'
         ], 404);
     }
+
+    public function likeArticle(Article $article, $slug, Request $request): JsonResponse
+    {
+        $validated = $request->validate(['likes' => 'boolean']);
+        $article = $article->where('slug', $slug)->first();
+
+        if ($validated['likes'] && $article) {
+            $this->likeIncrease($article);
+            return response()->json([
+                "liked" => $validated['likes'],
+                "count" => $article->likes,
+                "article" => $article
+            ]);
+        } else {
+            return response()->json([
+                "liked" => $validated['likes'],
+                "count" => $article->likes,
+                "article" => $article
+            ], 200);
+        }
+    }
+
 
 
 

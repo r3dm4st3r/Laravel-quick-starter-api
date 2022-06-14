@@ -39,6 +39,7 @@ Route::group([
 ], function () {
     Route::post('/articles', [\App\Http\Controllers\Blog\ArticleController::class, 'index'])->name('articles');
     Route::get('/articles/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'viewArticle'])->name('articlesDetail');
+    Route::post('/articles/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'likeArticle'])->name('likeArticle');
 });
 
 
