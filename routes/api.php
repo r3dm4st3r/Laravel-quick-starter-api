@@ -38,6 +38,7 @@ Route::group([
     'prefix' => 'blog'
 ], function () {
     Route::post('/articles', [\App\Http\Controllers\Blog\ArticleController::class, 'index'])->name('articles');
+    Route::get('/articles/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'viewArticle'])->name('articlesDetail');
 });
 
 

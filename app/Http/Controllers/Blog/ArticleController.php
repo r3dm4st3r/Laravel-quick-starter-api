@@ -34,6 +34,21 @@ class ArticleController extends Controller
        return $this->fetchArticles();
     }
 
+    public function viewArticle(Article $article, $slug): JsonResponse
+    {
+        $article = $article->where('slug', $slug)->get()->first();
+        if ($article) {
+            return response()->json([
+                'article' => $article
+            ], 200);
+        }
+        return response()->json([
+            'message' => 'No articles found'
+        ], 404);
+    }
+
+
+
 // For backend
     public function articles(): JsonResponse
     {

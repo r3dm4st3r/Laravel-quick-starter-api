@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @method where(string $string, $slug)
+ */
 class Article extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    protected $casts = [ "created_at" => "date:d-M-Y h:i a" ];
 
     protected static function boot()
     {
