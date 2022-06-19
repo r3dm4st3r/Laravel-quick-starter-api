@@ -5,16 +5,16 @@ namespace App\Http\Controllers\Blog;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateOrUpdateArticleRequest;
 use App\Models\Article;
+use App\Models\Tags;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
 
     protected function fetchArticles(): JsonResponse
     {
-        $articles = DB::table('articles')->orderByDesc('created_at')->get();
+        $articles = Article::with('tags')->withCount('tags')->orderByDesc('created_at')->get();
         $count = count($articles);
 
         if ($count > 0) {
@@ -51,6 +51,7 @@ class ArticleController extends Controller
     public function viewArticle(Article $article, $slug): JsonResponse
     {
         $article = $article->where('slug', $slug)->first();
+        $article = $article->load('tags')->loadCount('tags');
         $this->viewIncrease($article);
         if ($article) {
             return response()->json([
@@ -59,7 +60,7 @@ class ArticleController extends Controller
         }
         return response()->json([
             'message' => 'No articles found'
-        ], 404);
+        ]);
     }
 
     public function likeArticle(Article $article, $slug, Request $request): JsonResponse
@@ -94,7 +95,22 @@ class ArticleController extends Controller
 
     public function createArticle(CreateOrUpdateArticleRequest $request): JsonResponse
     {
-        Article::create($request->validated());
+        $article = Article::create($request->validated());
+
+        if ($article) {
+            $tags = $request->get('tags');
+            $tagIds = [];
+
+            foreach ($tags as $tag) {
+                $tag = Tags::firstOrCreate(['name' => $tag['name']]);
+                if ($tag) {
+                    $tagIds[] = $tag->id;
+                }
+            }
+
+            $article->tags()->sync($tagIds);
+        }
+
         return response()->json([
             'message' => 'Article created',
         ], 200);

@@ -37,9 +37,20 @@ Route::group([
 Route::group([
     'prefix' => 'blog'
 ], function () {
-    Route::post('/articles', [\App\Http\Controllers\Blog\ArticleController::class, 'index'])->name('articles');
-    Route::get('/articles/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'viewArticle'])->name('articlesDetail');
-    Route::post('/articles/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'likeArticle'])->name('likeArticle');
+    Route::group([
+        'prefix' => 'articles'
+    ],function () {
+        Route::post('/', [\App\Http\Controllers\Blog\ArticleController::class, 'index'])->name('articles');
+        Route::get('/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'viewArticle'])->name('articlesDetail');
+        Route::post('/{slug:slug}', [\App\Http\Controllers\Blog\ArticleController::class, 'likeArticle'])->name('likeArticle');
+    });
+
+    Route::group([
+        'prefix' => 'tags'
+    ],function () {
+        Route::post('/', [\App\Http\Controllers\Blog\TagController::class, 'index'])->name('tags');
+        Route::post('/{slug:slug}', [\App\Http\Controllers\Blog\TagController::class, 'viewTag'])->name('tagDetails');
+    });
 });
 
 

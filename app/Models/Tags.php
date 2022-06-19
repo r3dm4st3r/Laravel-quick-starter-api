@@ -7,30 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-/**
- * @method where(string $string, $slug)
- */
-class Article extends Model
+class Tags extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
     protected $casts = [ "created_at" => "date:d-M-Y h:i a", "updated_at" => "date:d-M-Y h:i a" ];
-
 
     protected static function boot()
     {
         parent::boot();
         static::creating(function ($model) {
-            $random = substr(md5(mt_rand()), 0, 7);
-            $model->slug = Str::slug($model->title.'-'.$random);
+            $model->slug = Str::slug($model->name);
         });
     }
 
 
-    public function tags(): BelongsToMany
+    public function articles(): BelongsToMany
     {
-        return $this->belongsToMany(Tags::class);
+        return $this->belongsToMany(Article::class);
     }
+
 
 }

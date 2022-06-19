@@ -20,7 +20,7 @@ class ArticleFactory extends Factory
         return [
             DB::table('articles')->insert([
                 'title' => $this->faker->sentence,
-                'slug' => $this->faker->url,
+                'slug' => $this->faker->slug,
                 'info' => $this->faker->sentence(10),
                 'content' => $this->faker->sentence(50),
                 'created_at' => now(),
